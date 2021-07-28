@@ -9,10 +9,10 @@ float PI = 3.14159;
 class Prism2D
 {
 public:
-
-    int tipXPos, tipYPos, refractiveIndex;
-    int leftBaseXPos, rightBaseXPos;
-    int baseYPos;
+ 
+    float tipXPos, tipYPos, refractiveIndex;
+    float leftBaseXPos, rightBaseXPos;
+    float baseYPos;
 
     int triangeHeight;
     
@@ -49,7 +49,8 @@ class LightRay
 {
 public:
 
-    int startXPos, startYPos;
+    float startXPos, startYPos;
+    float rayHeadXPos, rayHeadYPos;
     int wavelenghth;
 
     float headingRadians = 0.0f;
@@ -66,6 +67,9 @@ public:
         
         startXPos = x;
         startYPos = y;
+        rayHeadXPos = x;
+        rayHeadYPos = y;
+
         wavelenghth = lambda;
         
         // will sign of dx and dy be correct for all angles?
@@ -77,20 +81,36 @@ public:
 
     void propogate()
     {
-        // if we are within the window
-        if(0 < startXPos < WINDOW_WIDTH-abs(dx) && 0 < startYPos < WINDOW_HEIGHT-abs(dy))
-        {
-            startXPos = (float) startXPos + dx;
-            startYPos = (float) startYPos + dy;
-        }
+        if(
+            0 <= rayHeadXPos && rayHeadXPos <= WINDOW_WIDTH 
+            && 
+            0 <= rayHeadYPos && rayHeadYPos <= WINDOW_HEIGHT
+        ){
+            rayHeadXPos = rayHeadXPos + dx;
+            rayHeadYPos = rayHeadYPos + dy;
+        }         
+    }
+
+    void propogateToEnd()
+    {
+        while(
+            0 <= rayHeadXPos && rayHeadXPos <= WINDOW_WIDTH 
+            && 
+            0 <= rayHeadYPos && rayHeadYPos <= WINDOW_HEIGHT
+        ){
+            rayHeadXPos = rayHeadXPos + dx;
+            rayHeadYPos = rayHeadYPos + dy;
+        } 
     }
 
     friend std::ostream& operator << (std::ostream& output, const LightRay ray)
     {
         output << std::endl;
         output << "********** Light Ray **********: " << std::endl;
-        output << "X: " << ray.startXPos << std::endl;
-        output << "Y: " << ray.startYPos << std::endl;
+        output << "startX: " << ray.startXPos << std::endl;
+        output << "startY: " << ray.startYPos << std::endl;
+        output << "currentX: " << ray.rayHeadXPos << std::endl;
+        output << "currentY: " << ray.rayHeadYPos << std::endl;
         output << "Ray Heading: " << ray.headingRadians << std::endl;
         output << "dx: " << ray.dx << std::endl;
         output << "dy: " << ray.dy << std::endl << std::endl;
@@ -98,20 +118,50 @@ public:
     }
 };
 
+bool posIsInTriangle(float Ax, float Ay, float Bx, float By, float Cx, float Cy, float Px, float Py)
+{
+    /*
+        Calculating if the position P is in the triangle ABC by the use of vector
+        coordinates representing the position of P relative to A, and the weights
+        w1 and w2 which represent the distance along lines AB and AC.
+
+        The further P is from A the larger these vectors and hence the large the
+        weights w1 and w2. P can be written in terms of A,B,C,w1,w2. This splits
+        into two eqns Px and Py with two unknowns w1 and w2, which can be
+        solved for.
+    */
+    
+    // float w1 = ((Ax*(Cy-Ay))+((Py-Ay)*(Cx-Ax))-(Px*(Cy-Ay))) / (((By-Ay)*(Cx-Ax)) - ((Bx-Ax)*(Cy-Ay)));
+    // float w2 = (Py-Ay-(w1*(By-Ay))) / (Cy-Ay);
+    // When we take into account the fact that Ay==Cy in our case (equilateral triangle)
+    // the above w1 and w2 expressions can be derived as:
+    double w1 = (Py-Ay)/(By-Ay);
+    double w2 = ((Px-Ax)/(Cx-Ax))-(((Py-Ay)*(Bx-Ax))/((By-Ay)*(Cx-Ax)));
+
+    std::cout << "w1: " << w1 << " w2: " << w2 << std::endl;
+
+    if (0 <= w1 && 0 <= w2 && (w1+w2) <= 1)
+    {
+        return true;
+    }
+    return false;
+}
+
 int main()
 {
-    // Window dimensions
-    int Width = 500;
-    int Height = 500;
 
     Prism2D prism(250, 300, 50, 2);
-    LightRay ray(0, 300, 90, 666);
-
     std::cout << prism;
+    
+    LightRay ray(250, 301, 90, 666);
+    bool flag = posIsInTriangle(
+                    prism.leftBaseXPos, prism.baseYPos,
+                    prism.tipXPos, prism.tipYPos,
+                    prism.rightBaseXPos, prism.baseYPos,
+                    ray.rayHeadXPos, ray.rayHeadYPos
+    );
+    std::cout << "Pos is in Triangle: " << flag << std::endl;
 
-    ray.propogate();
-    std::cout << ray;
-    ray.propogate();
 
     return 0;
 }
