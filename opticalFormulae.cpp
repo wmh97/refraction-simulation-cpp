@@ -42,8 +42,8 @@ float snellsLaw(LightRay &ray, Prism2D prism)
             }
         }
 
-        std::cout << "distances[i]: " << distances[i] << std::endl;
-        std::cout << "shortest: " << shortestDistance <<std::endl;
+        //std::cout << "distances[i]: " << distances[i] << std::endl;
+        //std::cout << "shortest: " << shortestDistance <<std::endl;
     }
 
     // finding the angle from vertical the normal to the surface is.
@@ -76,6 +76,8 @@ float snellsLaw(LightRay &ray, Prism2D prism)
         angleOfIncidenceDegrees = std::abs(
             normalVectorAngleDegrees - addAnglesDregreesWrapAround(ray.headingDegrees, 180)
         );
+
+        std::cout << "Angle of incidence: " << angleOfIncidenceDegrees << std::endl;
     }
 
     if(round(angleOfIncidenceDegrees) == 90.0)
@@ -84,41 +86,69 @@ float snellsLaw(LightRay &ray, Prism2D prism)
         // TODO.
     }
 
-    // putting values into rearranged snells law to give angle or refraction (wrt vertical).
-    // assuming we are going from MEDIUM to prism.
-    // Converting from degrees to randians and back on the go.
-    float angleOfRefractionDegrees = (
-        radiansToDegrees(
-            asin( ((float)MEDIUM_REFRACTIVE_INDEX/(float)prism.refractiveIndex) * sin(degreesToRadians(angleOfIncidenceDegrees)) )   
-        ) 
-    );
+    /*
+        NOTE: Our formula seems to break down at the point of exiting the medium for refractive index
+              of that medium of at least n=>2 - We get 'nan'. With n=1.33 for glass we get the expected
+              direction of diversion of the ray, but this needs testing.
 
-    float newRayHeadingDegrees;
+        ************************************************************************************************
+        ALSO not sure of the conditions below... it seems they are the same here, but actually depend on direction
+        of travel (L->R vs R->L) instead. That is, while the prism is oriented point up. We may actually need to
+        depend these conditions upon the gradient of the sides of the prism (+ve/-ve) instead as this may be what
+        gives any difference in LR/RL behaviour
+        ************************************************************************************************
+    */
+
+    float angleOfRefractionDegrees;
     if(exitingMedium)
     {
-        if(reverseNormalVectorAngleDegrees - ray.headingDegrees > 0) 
+
+        // putting values into rearranged snells law to give angle or refraction (wrt vertical).
+        // assuming we are going from MEDIUM to prism.
+        // Converting from degrees to randians and back on the go.
+        angleOfRefractionDegrees = (
+            radiansToDegrees(
+                asin( ((float)prism.refractiveIndex/(float)MEDIUM_REFRACTIVE_INDEX) * sin(degreesToRadians(angleOfIncidenceDegrees)) )   
+            )
+        );
+
+        // on exit, bend ray away from the normal to the outside of the medium
+
+        // if the normal on exit is greater
+        if(ray.headingDegrees < reverseNormalVectorAngleDegrees) 
         { 
-            ray.headingDegrees = reverseNormalVectorAngleDegrees - angleOfRefractionDegrees;
-            ray.headingRadians = degreesToRadians(ray.headingDegrees);
+            ray.setNewHeading(reverseNormalVectorAngleDegrees - angleOfRefractionDegrees);
         }
-        if(reverseNormalVectorAngleDegrees - ray.headingDegrees < 0) 
-        { 
-            ray.headingDegrees = reverseNormalVectorAngleDegrees + angleOfRefractionDegrees;
-            ray.headingRadians = degreesToRadians(ray.headingDegrees);
+        if(ray.headingDegrees > reverseNormalVectorAngleDegrees) 
+        {   
+            ray.setNewHeading(reverseNormalVectorAngleDegrees + angleOfRefractionDegrees);
         }
+
+        std::cout << "EXITING PRISM" << std::endl;
     } 
     else
     {
+        // putting values into rearranged snells law to give angle or refraction (wrt vertical).
+        // assuming we are going from MEDIUM to prism.
+        // Converting from degrees to randians and back on the go.
+        angleOfRefractionDegrees = (
+            radiansToDegrees(
+                asin( ((float)MEDIUM_REFRACTIVE_INDEX/(float)prism.refractiveIndex) * sin(degreesToRadians(angleOfIncidenceDegrees)) )   
+            ) 
+        );        
+        
+        // on entry, bend ray towards normal on the inside of the medium.
+        
         if(reverseNormalVectorAngleDegrees - ray.headingDegrees > 0) 
         { 
-            ray.headingDegrees = reverseNormalVectorAngleDegrees + angleOfRefractionDegrees;
-            ray.headingRadians = degreesToRadians(ray.headingDegrees);
+            ray.setNewHeading(reverseNormalVectorAngleDegrees - angleOfRefractionDegrees);
         }
         if(reverseNormalVectorAngleDegrees - ray.headingDegrees < 0) 
         { 
-            ray.headingDegrees = reverseNormalVectorAngleDegrees - angleOfRefractionDegrees;
-            ray.headingRadians = degreesToRadians(ray.headingDegrees);
+            ray.setNewHeading(reverseNormalVectorAngleDegrees + angleOfRefractionDegrees);
         }
+
+        std::cout << "ENTERING PRISM" << std::endl;
     }
 
     std::cout << "Angle Refrac: " << angleOfRefractionDegrees << std::endl;

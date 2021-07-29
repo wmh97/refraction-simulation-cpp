@@ -3,7 +3,7 @@
 #include "geometricUtils.h"
 
     
-Prism2D::Prism2D(int x, int y, int h, int n)
+Prism2D::Prism2D(int x, int y, int h, float n)
 {
     tipXPos = x;
     tipYPos = y;

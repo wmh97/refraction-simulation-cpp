@@ -19,11 +19,16 @@ LightRay::LightRay(int x, int y, int thetaDegrees, int lambda)
     wavelenghth = lambda;
     
     // will sign of dx and dy be correct for all angles?
-    headingDegrees = thetaDegrees;
-    headingRadians = degreesToRadians(thetaDegrees);
+    this->setNewHeading(thetaDegrees);
+
+}
+
+void LightRay::setNewHeading(float newHeadingDegrees)
+{
+    headingDegrees = newHeadingDegrees;
+    headingRadians = degreesToRadians(newHeadingDegrees);
     dx = sin(headingRadians);
     dy = cos(headingRadians);
-
 }
 
 void LightRay::propogate()

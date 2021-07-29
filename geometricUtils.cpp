@@ -33,7 +33,7 @@ bool posIsInTriangle(float Ax, float Ay, float Bx, float By, float Cx, float Cy,
     double w1 = (Py-Ay)/(By-Ay);
     double w2 = ((Px-Ax)/(Cx-Ax))-(((Py-Ay)*(Bx-Ax))/((By-Ay)*(Cx-Ax)));
 
-    std::cout << "w1: " << w1 << " w2: " << w2 << std::endl;
+    //std::cout << "w1: " << w1 << " w2: " << w2 << std::endl;
 
     if (0 <= w1 && 0 <= w2 && (w1+w2) <= 1)
     {

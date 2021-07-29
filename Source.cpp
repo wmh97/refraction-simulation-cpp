@@ -13,11 +13,11 @@ float PI = 3.14159;
 int main()
 {
 
-    Prism2D prism(250, 300, 50, 2);
+    Prism2D prism(250, 300, 50, 1.33);
     std::cout << prism;
     LightRay ray(0, 275, 90, 666);
     std::cout << ray;
-    
+
     bool rayInPrism = false;
     while(!rayInPrism)
     {
@@ -29,12 +29,26 @@ int main()
         );
         ray.propogate();
     }
+    snellsLaw(ray, prism);
     std::cout << ray;
 
-    // set refracted ray heading
-    float angleOfRefractionDegrees = snellsLaw(ray, prism);
-
+    while(rayInPrism)
+    {
+        rayInPrism = posIsInTriangle(
+            prism.leftBaseXPos, prism.baseYPos,
+            prism.tipXPos, prism.tipYPos,
+            prism.rightBaseXPos, prism.baseYPos,
+            ray.rayHeadXPos, ray.rayHeadYPos
+        );
+        ray.propogate();
+    }
+    snellsLaw(ray, prism);
     std::cout << ray;
+
+    ray.propogateToEnd();
+    std::cout <<"END:" << std::endl;
+    std::cout << ray;
+    
 
     return 0;
 }

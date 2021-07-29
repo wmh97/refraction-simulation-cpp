@@ -22,6 +22,8 @@ public:
 
     LightRay(int x, int y, int thetaDegrees, int lambda);
 
+    void setNewHeading(float newHeadingDegrees);
+
     void propogate();
 
     void propogateToEnd();

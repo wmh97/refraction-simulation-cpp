@@ -4,7 +4,7 @@
 class Medium
 {
 public:
-    int refractiveIndex;
+    float refractiveIndex;
 };
 
 class Prism2D : public Medium
@@ -29,7 +29,7 @@ public:
 
     int triangeHeight;
     
-    Prism2D(int x, int y, int h, int n);
+    Prism2D(int x, int y, int h, float n);
 
     // although friend function is not a member function it can
     // still be defined in the class scope.
