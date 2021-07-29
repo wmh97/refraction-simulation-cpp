@@ -57,3 +57,13 @@ float addAnglesDregreesWrapAround(float a1, float a2)
     return addedAngle;
     
 }
+
+float degreesToRadians(float deg)
+{
+    return deg * (3.14159 / 180.0);
+}
+
+float radiansToDegrees(float rad)
+{
+    return rad * (180.0 / 3.14159);
+}
