@@ -38,6 +38,11 @@ def main():
     plt.xlim(0, 500)
     plt.ylim(0, 500)
 
+    prismStartX = prismXPositions[0]
+    prismStartY = prismYPositions[0]
+    prismXPositions.append(prismStartX)
+    prismYPositions.append(prismStartY)
+
     plt.plot(prismXPositions, prismYPositions)
     plt.plot(rayXPositions, rayYPositions)
 

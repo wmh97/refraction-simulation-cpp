@@ -52,6 +52,7 @@ int main()
     ray.propogateToEnd();
     std::cout <<"END:" << std::endl;
     std::cout << ray;
+    ray.outputCoordinates();
     
 
     return 0;
