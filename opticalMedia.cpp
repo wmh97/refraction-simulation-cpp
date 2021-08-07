@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "opticalMedia.h"
 #include "geometricUtils.h"
 
@@ -29,6 +30,21 @@ Prism2D::Prism2D(int x, int y, int h, float n)
     leftSideNormalVectorAngleDegrees = 300.0;
     rightSideNormalVectorAngleDegrees = 60.0;
     baseNormalVectorAngleDegrees = 180.0;
+}
+
+void Prism2D::outputCoordinates()
+{
+    std::ofstream outputFile("PrismCoordinates.txt", std::ios::app);
+    if(outputFile.is_open())
+    {
+        outputFile << leftBaseXPos << "," << baseYPos << std::endl;
+        outputFile << rightBaseXPos << "," << baseYPos << std::endl;
+        outputFile << tipXPos << "," << tipYPos << std::endl;
+    }
+    else
+    {
+        std::cout << "Output file could not be opened!" << std::endl;
+    }
 }
 
 // friend function is defined as a non member function. The function is really acting

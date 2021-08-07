@@ -17,6 +17,8 @@ int main()
     std::cout << prism;
     LightRay ray(0, 275, 90, 666);
     std::cout << ray;
+    prism.outputCoordinates();
+    ray.outputCoordinates();
 
     bool rayInPrism = false;
     while(!rayInPrism)
@@ -31,6 +33,7 @@ int main()
     }
     snellsLaw(ray, prism);
     std::cout << ray;
+    ray.outputCoordinates();
 
     while(rayInPrism)
     {
@@ -44,6 +47,7 @@ int main()
     }
     snellsLaw(ray, prism);
     std::cout << ray;
+    ray.outputCoordinates();
 
     ray.propogateToEnd();
     std::cout <<"END:" << std::endl;

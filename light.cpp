@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "math.h"
 #include "light.h"
 #include "geometricUtils.h"
@@ -53,6 +54,19 @@ void LightRay::propogateToEnd()
         rayHeadXPos = rayHeadXPos + dx;
         rayHeadYPos = rayHeadYPos + dy;
     } 
+}
+
+void LightRay::outputCoordinates()
+{
+    std::ofstream outputFile("RayCoordinates.txt", std::ios::app);
+    if(outputFile.is_open())
+    {
+        outputFile << rayHeadXPos << "," << rayHeadYPos << std::endl;
+    }
+    else
+    {
+        std::cout << "Output file could not be opened!" << std::endl;
+    }
 }
 
 std::ostream& operator << (std::ostream& output, const LightRay ray)

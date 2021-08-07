@@ -31,6 +31,8 @@ public:
     
     Prism2D(int x, int y, int h, float n);
 
+    void outputCoordinates();
+
     // although friend function is not a member function it can
     // still be defined in the class scope.
     friend std::ostream& operator << (std::ostream& output, const Prism2D prism);

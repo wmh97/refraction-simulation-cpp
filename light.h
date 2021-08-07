@@ -28,6 +28,8 @@ public:
 
     void propogateToEnd();
 
+    void outputCoordinates();
+
     friend std::ostream& operator << (std::ostream& output, const LightRay ray);
 };
 
