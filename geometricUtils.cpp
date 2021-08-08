@@ -42,6 +42,15 @@ bool posIsInTriangle(float Ax, float Ay, float Bx, float By, float Cx, float Cy,
     return false;
 }
 
+bool posIsInScreen(float x, float y)
+{
+    return ( 
+        0 <= x && x <= 500 
+        && 
+        0 <= y && y <= 500
+    );
+}
+
 float addAnglesDregreesWrapAround(float a1, float a2)
 {
     /*

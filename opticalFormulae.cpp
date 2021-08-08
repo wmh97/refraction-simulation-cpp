@@ -6,7 +6,7 @@
 
 const int MEDIUM_REFRACTIVE_INDEX = 1;
 
-float snellsLaw(LightRay &ray, Prism2D prism)
+float snellsLaw(LightRay &ray, Prism2D prism, bool exitingMedium=false)
 {
     /*
         Light travels from medium1 to medium2:
@@ -63,11 +63,8 @@ float snellsLaw(LightRay &ray, Prism2D prism)
     // If we have identified we are meeting the prism on a certain side, but the angle of incidence
     // is greater than a right angle, we must be approaching the inside, therefore flip the normal
     // vector to the surface to the opposite direction.
-    bool exitingMedium = false;
-    if(angleOfIncidenceDegrees > 90.0 )
-    {
-        exitingMedium = true;
-        
+    if(exitingMedium)
+    {        
         float temp = normalVectorAngleDegrees;
         normalVectorAngleDegrees = reverseNormalVectorAngleDegrees;
         reverseNormalVectorAngleDegrees = temp;
@@ -151,6 +148,7 @@ float snellsLaw(LightRay &ray, Prism2D prism)
         std::cout << "ENTERING PRISM" << std::endl;
     }
 
+    std::cout << "Angle Incidence: " << angleOfIncidenceDegrees << std::endl;
     std::cout << "Angle Refrac: " << angleOfRefractionDegrees << std::endl;
     std::cout << "Reverse Normal: " << reverseNormalVectorAngleDegrees << std::endl;
 

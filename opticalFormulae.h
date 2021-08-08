@@ -3,6 +3,6 @@
 
 const extern int MEDIUM_REFRACTIVE_INDEX;
 
-float snellsLaw(LightRay &ray, Prism2D prism);
+float snellsLaw(LightRay &ray, Prism2D prism, bool exitingMedium=false);
 
 #endif

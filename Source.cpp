@@ -10,50 +10,62 @@
 //int MEDIUM_REFRACTIVE_INDEX = 1;
 float PI = 3.14159;
 
-int main()
+bool rayIsInPrism(LightRay ray, Prism2D prism)
 {
+    return posIsInTriangle(
+                prism.leftBaseXPos, prism.baseYPos,
+                prism.tipXPos, prism.tipYPos,
+                prism.rightBaseXPos, prism.baseYPos,
+                ray.rayHeadXPos, ray.rayHeadYPos
+    );    
+}
 
-    Prism2D prism(250, 300, 50, 1.33);
+void runSimulation(LightRay ray, Prism2D prism)
+{
     std::cout << prism;
-    LightRay ray(0, 275, 90, 666);
     std::cout << ray;
     prism.outputCoordinates();
     ray.outputCoordinates();
 
-    bool rayInPrism = false;
-    while(!rayInPrism)
-    {
-        rayInPrism = posIsInTriangle(
-            prism.leftBaseXPos, prism.baseYPos,
-            prism.tipXPos, prism.tipYPos,
-            prism.rightBaseXPos, prism.baseYPos,
-            ray.rayHeadXPos, ray.rayHeadYPos
-        );
+    bool lastRayPositionInPrism = false;
+    bool exitingPrism = false;
+    while(
+            posIsInScreen(ray.rayHeadXPos, ray.rayHeadYPos)
+    ){
+        bool rayInPrism = false;
+        rayInPrism = rayIsInPrism(ray, prism);
         ray.propogate();
-    }
-    snellsLaw(ray, prism);
-    std::cout << ray;
-    ray.outputCoordinates();
 
-    while(rayInPrism)
-    {
-        rayInPrism = posIsInTriangle(
-            prism.leftBaseXPos, prism.baseYPos,
-            prism.tipXPos, prism.tipYPos,
-            prism.rightBaseXPos, prism.baseYPos,
-            ray.rayHeadXPos, ray.rayHeadYPos
-        );
-        ray.propogate();
-    }
-    snellsLaw(ray, prism);
-    std::cout << ray;
-    ray.outputCoordinates();
+        if(lastRayPositionInPrism != rayInPrism)
+        {
+            if(lastRayPositionInPrism)
+            {
+                exitingPrism = true;
+            }
+            else
+            {
+                exitingPrism = false;
+            }
+            lastRayPositionInPrism = rayInPrism;
 
-    ray.propogateToEnd();
+            snellsLaw(ray, prism, exitingPrism);
+            std::cout << ray;
+            ray.outputCoordinates();
+        }
+    }
+
     std::cout <<"END:" << std::endl;
     std::cout << ray;
-    ray.outputCoordinates();
-    
+    ray.outputCoordinates();    
+}
+
+int main()
+{
+
+    Prism2D prism(250, 300, 50, 1.33);
+    LightRay ray(240, 350, 180, 666);
+
+    runSimulation(ray, prism);
 
     return 0;
 }
